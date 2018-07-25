@@ -34,10 +34,8 @@ app.post('/todos', (request, response) => {
         text: request.body.text
     });
     todo.save().then((doc) => {
-        console.log('received success==', doc)
         response.status(200).send(doc);
     }).catch(e => {
-        console.log('received error==', e);
         response.status(400).send(e);
     });
 });
