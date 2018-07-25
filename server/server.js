@@ -2,8 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const {mongoose} = require('./db/mongoose');
-const {Todo} = require('./models/Todo');
-const {User} = require('./models/User');
+const {Todo} = require('./models/todo');
+const {User} = require('./models/user');
 
 
 var app = express();
@@ -11,9 +11,9 @@ var app = express();
 // Configure the middleware for getting JSON
 app.use(bodyParser.json());
 
-// app.get('', (request, response) => {
-//     response.render({name:'Satyanand'});
-// });
+app.get('', (request, response) => {
+    response.render({name:'Satyanand'});
+});
 
 
 app.get('/', (request, response) => {
@@ -34,10 +34,9 @@ app.post('/todos', (request, response) => {
     });
 });
 
-
-
-
 app.listen(3000, () => {
     console.log('Server started at port 2000');
 });
+
+module.exports = {app};
 
