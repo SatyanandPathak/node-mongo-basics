@@ -11,13 +11,21 @@ var app = express();
 // Configure the middleware for getting JSON
 app.use(bodyParser.json());
 
-app.get('', (request, response) => {
-    response.render({name:'Satyanand'});
+app.get('/', (request, response) => {
+    response.send('Home Page.');
 });
 
 
-app.get('/', (request, response) => {
-    response.render('Hello world');
+app.get('/todos', (request, response) => {
+
+    Todo.find()
+    .then((todos) => {
+        // ES6 format sending json todos: todos
+        response.send({todos})
+    })
+    .catch(e => {
+        response.status(400).send(e);
+    });
 });
 
 app.post('/todos', (request, response) => {
