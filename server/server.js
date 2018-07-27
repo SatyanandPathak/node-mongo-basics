@@ -63,6 +63,25 @@ app.post('/todos', (request, response) => {
     });
 });
 
+// Delete route handler
+app.delete('/todos/:id', (request, response)=> {
+    const id = request.param('id');
+    console.log('id is::::', id)
+    
+    if(!ObjectID.isValid(id)){
+        return response.status(400).send({'description': 'Invalid id'});
+    }
+
+    Todo.findByIdAndRemove(id)
+    .then((todo) => {
+        if(!todo){
+            return response.status(404).send({'description': 'Id does not exists'});
+        }
+        return response.status(200).send({todo});
+    })
+    .catch(e => response.status(500).send(e));
+})
+
 app.listen(port, () => {
     console.log(`Server started at port ${port}`);
 });
