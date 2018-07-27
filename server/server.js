@@ -65,8 +65,7 @@ app.post('/todos', (request, response) => {
 
 // Delete route handler
 app.delete('/todos/:id', (request, response)=> {
-    const id = request.param('id');
-    console.log('id is::::', id)
+    const id = request.params.id;
     
     if(!ObjectID.isValid(id)){
         return response.status(400).send({'description': 'Invalid id'});

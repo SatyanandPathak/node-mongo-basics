@@ -107,7 +107,6 @@ describe('GET todos by id', () => {
       expect(response.body.todo.text).toBe(todos[0].text);
     })
     .end(done);
-    //done();
 
   });
 
@@ -125,4 +124,49 @@ describe('GET todos by id', () => {
     .expect(400)
     .end(done);
   })
+});
+
+
+describe('Delete todos', () => {
+  it('should remove a todo with valid ID', (done) => {
+    var id = todos[0]._id;
+
+    request(app)
+    .delete(`/todos/${id}`)
+    .expect(200)
+    .expect((res) => {
+      expect(res.body.todo._id).toBe(id.toHexString())
+    })
+    .end((err, response) => {
+      if(err){
+        return done(err);
+      }
+      Todo.findById(id)
+      .then((todo) => {
+        expect(todo).toBe(null);
+        done();
+      })
+      .catch(err => done(err));
+
+    });
+
+    
+  });
+
+  it('should return a 404 when a todo is not found', (done) => {
+    var randomId = new ObjectID();
+    request(app)
+    .delete(`/todos/${randomId}`)
+    .expect(404)
+    .end(done);
+
+  });
+
+  it('should return 400 if object id is invalid', (done) => {
+    request(app)
+    .delete(`/todos/2`)
+    .expect(400)
+    .end(done);
+  });
+
 });
