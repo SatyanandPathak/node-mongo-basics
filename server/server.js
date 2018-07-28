@@ -53,7 +53,6 @@ app.get('/todos/:id', (request, response) => {
 
 // POST a TODO
 app.post('/todos', (request, response) => {
-    console.log(request.body);
     var todo = new Todo({
         text: request.body.text
     });
@@ -84,6 +83,7 @@ app.delete('/todos/:id', (request, response)=> {
 
 // Update todo. Can use PUT or PATCH
 app.patch('/todos/:id', (request, response) => {
+
     var id = request.params.id;
     // No need to pick all the invalid content that is not supported for update
     var body = _.pick(request.body, ['completed', 'text'])
@@ -103,7 +103,7 @@ app.patch('/todos/:id', (request, response) => {
         if(!todo){
             return response.status(404).send({description: 'Id not found'});
         }
-        return response.status(204).send(todo);
+        return response.status(200).send({todo});
     })
     .catch(e => response.status(500).send({description: 'Internal Server Error'}));
 
