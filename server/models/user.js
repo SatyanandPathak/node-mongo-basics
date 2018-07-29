@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const JWT = require('jsonwebtoken');
 const _ = require('lodash');
+const bcrypt = require('bcryptjs');
 
 
 var UserSchema = new mongoose.Schema({
@@ -39,7 +40,7 @@ UserSchema.methods.toJSON = function() {
     var user = this;
     var userObject = user.toObject();
 
-    return _.pick(userObject, ['_id', 'email'])
+    return _.pick(userObject, ['_id', 'email', 'tokens.token'])
 }
 
 // This is an instance method addition. So we use lower u in user = this
@@ -75,6 +76,20 @@ UserSchema.methods.generateAuthToken = function () {
           'tokens.access': 'auth' // Quotes are needed for nested keys
       });
   }
+
+  UserSchema.pre('save', function(next) {
+    var user = this;
+    if(user.isModified('password')) {
+        bcrypt.genSalt(10, (err, salt) => {
+            bcrypt.hash(user.password, salt, (err, hash) => {
+                user.password = hash;
+                next();
+            });
+        });
+    } else {
+        next();
+    }
+  })
 
 var User = mongoose.model('User', UserSchema);
 

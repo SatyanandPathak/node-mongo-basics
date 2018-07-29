@@ -4,6 +4,8 @@ var {authenticate} = require('./middleware/authenticate');
 const express = require('express');
 const bodyParser = require('body-parser');
 const _ = require('lodash');
+const JWT = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
 const {mongoose} = require('./db/mongoose');
 const {Todo} = require('./models/todo');
@@ -24,13 +26,38 @@ app.get('/', (request, response) => {
 });
 
 
-
-
 // Private Route
 app.get('/users/me', authenticate, (request, response) => {
     // This calls authenticate before and if success request is populated with user and token
     return response.send(request.user);
 })
+
+
+// Generate token for a user
+/*app.post('/token', (request, response) => {
+
+    var body = _.pick(request.body, ['email', 'password']);
+    var hashedPassword;
+    bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(body.password, salt, (err, hash) => {
+            hashedPassword = hash;
+        })
+    });
+    body.password = hashedPassword;
+    var user = new User(body);
+
+    User.findOne({email: body.email})
+    .then((user) => {
+        console.log('user obtained is==', user)
+        var id = user._id;
+        var access = 'auth';
+        var token = JWT.sign({_id: id.toHexString(), access}, 'secretsalt').toString();
+      
+        response.send({token});
+    })
+    
+    
+});*/
 
 /**
  * Users Route Handlers
