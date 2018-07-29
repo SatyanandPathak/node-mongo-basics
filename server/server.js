@@ -13,6 +13,8 @@ const port = process.env.PORT;
 
 var app = express();
 
+const internalServerError = {desctiption: 'Internal Server error'}
+
 // Configure the middleware for getting JSON
 app.use(bodyParser.json());
 
@@ -20,7 +22,42 @@ app.get('/', (request, response) => {
     response.send('Home Page.');
 });
 
-// Get all Todos
+/**
+ * Users Route Handlers
+ */
+
+ app.get('/users', (request, response) => {
+     User.find()
+     .then(users => {
+
+        console.log('response is===', JSON.stringify(users));
+        console.log('normal response is==', users);
+         response.status(200).send({users});
+     })
+     .catch(e => response.status(500).send(internalServerError))
+ });
+
+ app.post('/users', (request, response) => {
+    var body = _.pick(request.body, ['email', 'password']);
+    var user = new User(body);
+    
+    user.save()
+    .then(() => {
+        return user.generateAuthToken();
+        //return response.status(201).send({user})
+    })
+    .then((token) => {
+
+        return response.header('x-auth-token', token).status(201).send(user)
+    })
+    .catch(e => response.status(400).send({description: `${e}`}))
+ });
+
+ 
+
+/**
+ * Todos Route handlers
+ */
 app.get('/todos', (request, response) => {
 
     Todo.find()
