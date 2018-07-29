@@ -42,11 +42,11 @@ UserSchema.methods.toJSON = function() {
     return _.pick(userObject, ['_id', 'email'])
 }
 
-
+// This is an instance method addition. So we use lower u in user = this
 UserSchema.methods.generateAuthToken = function () {
     var user = this;
     var access = 'auth';
-    var token = JWT.sign({_id: user._id.toHexString(), access}, 'abc123').toString();
+    var token = JWT.sign({_id: user._id.toHexString(), access}, 'secretsalt').toString();
   
     user.tokens.push({access, token});
   
@@ -54,6 +54,27 @@ UserSchema.methods.generateAuthToken = function () {
       return token;
     });
   };
+
+  // This is a model method. So uppercase User = this
+  UserSchema.statics.findByToken = function(token){
+      // This is upper case U.
+      var User = this;
+      var decoded;
+      try{
+        decoded = JWT.verify(token, 'secretsalt');
+      } catch(e){
+        /*return new Promise((resolve, reject) => {
+            reject('Invalid user');
+        });*/
+        return Promise.reject('User not authorized');
+      }
+      
+      return User.findOne({
+          '_id': decoded._id, // Quotes are not needed for '_id' key
+          'tokens.token': token, // Quotes are needed for nested keys
+          'tokens.access': 'auth' // Quotes are needed for nested keys
+      });
+  }
 
 var User = mongoose.model('User', UserSchema);
 

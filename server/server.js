@@ -1,4 +1,5 @@
 require('./config/config');
+var {authenticate} = require('./middleware/authenticate');
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -21,6 +22,15 @@ app.use(bodyParser.json());
 app.get('/', (request, response) => {
     response.send('Home Page.');
 });
+
+
+
+
+// Private Route
+app.get('/users/me', authenticate, (request, response) => {
+    // This calls authenticate before and if success request is populated with user and token
+    return response.send(request.user);
+})
 
 /**
  * Users Route Handlers
