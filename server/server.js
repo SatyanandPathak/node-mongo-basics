@@ -112,7 +112,7 @@ app.get('/users/me', authenticate, (request, response) => {
         
       })
       .catch(e => {
-        return response.status(400).send({message: e});
+        return response.status(401).send({message: e});
       });
   });
  

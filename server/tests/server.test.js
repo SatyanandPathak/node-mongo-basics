@@ -293,3 +293,53 @@ describe('POST, /users', () => {
   });
   
 });
+
+describe('POST /users/login', () => {
+  it('should return user when valid credentials', (done) => {
+    var email = users[1].email;
+    var password = users[1].password;
+    request(app)
+    .post('/users/login')
+    .send({email, password})
+    .expect(200)
+    .expect((res) => {
+      expect(res.header['x-auth-token']).toBeTruthy();
+    })
+    .end((err, res) => {
+      if (err){
+        return done(err);
+      }
+
+
+      User.findById(users[1]._id)
+      .then((user) => {
+        // Here the user returned from DB will have complete details including the tokens
+
+        expect(user.tokens[0].token).toBe(res.headers['x-auth-token']);
+        expect(user.tokens[0].access).toBe('auth');
+        
+        // expect(user.tokens[0]).toBe({
+        //   access: 'auth',
+        //   token: res.headers['x-auth-token']
+        // })
+        expect(user.email).toBe(email);
+
+        done()
+      })
+      .catch(e => done(e));
+    });
+
+  });
+
+  it('should reject invalid login', (done) => {
+    request(app)
+    .post('/users/login')
+    .send({email: 'satyanand.pathak', password: '12345'})
+    .expect(401)
+    .expect(res => {
+      expect(res.header['x-auth-token']).toBeUndefined();
+      expect(res.body.message).toBe('Invalid Credentials(user id)');
+    })
+    .end(done());
+  });
+});
