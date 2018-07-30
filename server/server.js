@@ -71,12 +71,7 @@ app.get('/users/me', authenticate, (request, response) => {
 
  app.get('/users', (request, response) => {
      User.find()
-     .then(users => {
-
-        console.log('response is===', JSON.stringify(users));
-        console.log('normal response is==', users);
-         response.status(200).send({users});
-     })
+     .then(users => response.status(200).send({users}))
      .catch(e => response.status(500).send(internalServerError))
  });
 
@@ -99,6 +94,27 @@ app.get('/users/me', authenticate, (request, response) => {
     .catch(e => response.status(400).send({description: `${e}`}))
  });
 
+ /**
+  * Post user login
+  */
+
+  app.post('/users/login', (request, response) => {
+      var body = _.pick(request.body, ['email', 'password']);
+
+      User.findByCredentials(body.email, body.password)
+      .then(user => {
+
+        user.generateAuthToken()
+        .then(token => {
+            return response.header('x-auth-token', token).send({user});
+        })
+
+        
+      })
+      .catch(e => {
+        return response.status(400).send({message: e});
+      });
+  });
  
 
 /**

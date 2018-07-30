@@ -64,7 +64,7 @@ UserSchema.methods.generateAuthToken = function () {
     // Add the tokens array value i.e., access and token
     user.tokens.push({access, token});
     
-    // Save the user and return the token
+    // Save the user and return the promise containing token
     return user.save().then(() => {
       return token;
     });
@@ -99,6 +99,27 @@ UserSchema.methods.generateAuthToken = function () {
           'tokens.token': token, // Quotes are needed for nested keys
           'tokens.access': 'auth' // Quotes are needed for nested keys
       });
+  }
+
+  UserSchema.statics.findByCredentials = function(email, password){
+    var User = this;
+    return User.findOne({email})
+    .then(user => {
+        if(!user){
+            return Promise.reject('Invalid Credentials(user id)')
+        }
+
+        return new Promise((resolve, reject) => {
+            bcrypt.compare(password, user.password, (err, res) => {
+                if(res){
+                    resolve(user);
+                } else {
+                    reject('Invalid Credentials(password)');
+                }
+            })
+        });
+
+    });
   }
 
   /**
