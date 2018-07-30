@@ -1,16 +1,17 @@
 require('./config/config');
-var {authenticate} = require('./middleware/authenticate');
+
 
 const express = require('express');
-const bodyParser = require('body-parser');
-const _ = require('lodash');
-const JWT = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+const bodyParser = require('body-parser'); // Parse 
+const _ = require('lodash'); // Utility
+const JWT = require('jsonwebtoken'); // JWT to generate token
+const bcrypt = require('bcryptjs'); // Module used to encrypt a password before saving to Mongo
 
 const {mongoose} = require('./db/mongoose');
 const {Todo} = require('./models/todo');
 const {User} = require('./models/user');
 const {ObjectID} = require('mongodb');
+var {authenticate} = require('./middleware/authenticate'); // Middleware for authenticating a token for a user 
 
 const port = process.env.PORT;
 
@@ -26,11 +27,7 @@ app.get('/', (request, response) => {
 });
 
 
-// Private Route
-app.get('/users/me', authenticate, (request, response) => {
-    // This calls authenticate before and if success request is populated with user and token
-    return response.send(request.user);
-})
+
 
 
 // Generate token for a user
@@ -59,8 +56,17 @@ app.get('/users/me', authenticate, (request, response) => {
     
 });*/
 
+
 /**
- * Users Route Handlers
+ * Get a specifi user using a token. authenticate middleware is called
+ */
+app.get('/users/me', authenticate, (request, response) => {
+    // This calls authenticate before and if success request is populated with user and token
+    return response.send(request.user);
+});
+
+/**
+ * Get all the users
  */
 
  app.get('/users', (request, response) => {
@@ -74,6 +80,9 @@ app.get('/users/me', authenticate, (request, response) => {
      .catch(e => response.status(500).send(internalServerError))
  });
 
+ /**
+  * Create a new user
+  */
  app.post('/users', (request, response) => {
     var body = _.pick(request.body, ['email', 'password']);
     var user = new User(body);
