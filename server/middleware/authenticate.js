@@ -18,7 +18,7 @@ var authenticate = (request, response, next) => {
     })
     .catch(e => {
         // No need to call next() to propogate as auth failed
-        response.status(401).send({message: e});
+        response.status(401).send(e);
     });
 }
 

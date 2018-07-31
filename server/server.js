@@ -115,7 +115,19 @@ app.get('/users/me', authenticate, (request, response) => {
         return response.status(401).send({message: e});
       });
   });
- 
+
+  /**
+   * Delete token. Logout
+   */
+
+   app.delete('/users/me/token', authenticate, (request, response) => {
+    request.user.removeToken(request.token)
+    .then(() => {
+        response.status(200).send({message: 'User successfully logged out. Session Token deleted'});
+    })
+    .catch(e => response.status(400).send(e));
+
+   });
 
 /**
  * Todos Route handlers
