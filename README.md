@@ -31,6 +31,15 @@ deploy app in heroku:
 Add Heroku addons like mongo db:
 heroku addons: create mongolab:sandbox
 
+Add a env variable into Heroku config:
+heroku config:set NAME=Satyanand
+
+Get a value from a Config:
+heroku config:get NAME
+
+Unset a value from heroku config:
+heroku config:unset NAME
+
 
 
 Lifecycle:

@@ -59,7 +59,7 @@ UserSchema.methods.generateAuthToken = function () {
     var access = 'auth';
 
     // Generate token based on user id, access value and secretsalt/private key
-    var token = JWT.sign({_id: user._id.toHexString(), access}, 'secretsalt').toString();
+    var token = JWT.sign({_id: user._id.toHexString(), access}, process.env.JWT_SECRET).toString();
     
     // Add the tokens array value i.e., access and token
     user.tokens.push({access, token});
@@ -94,7 +94,7 @@ UserSchema.methods.generateAuthToken = function () {
         // Verify the token and generate the decoded value.
         // Format will be as below: 
         // decoded = {_id: 'id_value', tokens: {[{token: 'token value', access: 'auth'}]}})
-        decoded = JWT.verify(token, 'secretsalt');
+        decoded = JWT.verify(token, process.env.JWT_SECRET);
       } catch(e){
         /*return new Promise((resolve, reject) => {
             reject('Invalid user');

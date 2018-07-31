@@ -67,7 +67,7 @@ describe('POST /todos', () => {
 
 
 /**
- * 
+ * GET todos
  */
 describe('GET /todos', ()=> {
   // it('should get all todos', (done) => {
@@ -107,6 +107,9 @@ describe('GET /todos', ()=> {
 
 });
 
+/**
+ * GET todo by ID
+ */
 describe('GET todos by id', () => {
 
   it('should return a todo', (done) => {
@@ -147,6 +150,9 @@ describe('GET todos by id', () => {
  });
 
 
+ /**
+ * Delete todos
+ */
 describe('Delete todos', () => {
   it('should remove a todo with valid ID', (done) => {
     var id = todos[0]._id;

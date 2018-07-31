@@ -1,0 +1,13 @@
+{
+    "test": {
+        "PORT": 3000,
+        "MONGODB_URI": "mongodb://localhost:27017/TodoAppTest",
+        "JWT_SECRET":"b270e362-0352-4d8e-884c-5a475d16bde7"
+    },
+    "development": {
+        "PORT": 3000,
+        "MONGODB_URI": "mongodb://localhost:27017/TodoApp",
+        "JWT_SECRET":"57471b08-3eb5-4ab4-b9da-df8c5ab6c33b"
+
+    }
+}

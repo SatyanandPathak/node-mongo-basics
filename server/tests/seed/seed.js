@@ -7,7 +7,7 @@ const {User} = require('./../../models/user');
 const userOneId = new ObjectID();
 const userTwoId = new ObjectID();
 
-var getToken = userId => JWT.sign({_id:userId, access: 'auth'}, 'secretsalt').toString();
+var getToken = userId => JWT.sign({_id:userId, access: 'auth'}, process.env.JWT_SECRET).toString();
 
 const users = [
     {_id: userOneId, email: 'satyanand@gmail.com', password: 'userone123', tokens: [{access: 'auth', token: getToken(userOneId)}]},
