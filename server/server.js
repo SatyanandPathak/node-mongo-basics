@@ -128,11 +128,11 @@ app.get('/users/me', authenticate, (request, response) => {
    });
 
 /**
- * Todos Route handlers
+ * Route to get all the todos for a user
  */
-app.get('/todos', (request, response) => {
-
-    Todo.find()
+app.get('/todos', authenticate, (request, response) => {
+    // Find all the Todos for a particular user
+    Todo.find({_creator: request.user._id})
     .then((todos) => {
         // ES6 format sending json todos: todos
         response.send({todos})
@@ -143,13 +143,17 @@ app.get('/todos', (request, response) => {
 });
 
 // Get a TODO by Id
-app.get('/todos/:id', (request, response) => {
-
+app.get('/todos/:id', authenticate, (request, response) => {
+    console.log('inside the get todos')
     const id = request.params.id;
     if(!ObjectID.isValid(id)){
         return response.status(400).send({message: 'Id not valid'});
     }
-    Todo.findById(id)
+
+    Todo.findOne({
+        _creator: request.user._id,
+        _id: id
+    })
     .then((todo) => {
         if(!todo){
             return response.status(404).send({message: 'Could not find a todo'});
@@ -157,15 +161,22 @@ app.get('/todos/:id', (request, response) => {
 
         response.status(200).send({todo});
     })
-    .catch(e => response.status(500).send({'message':'Internal Server Error'}));
+    .catch(e => {
+        response.status(500).send({message:`Internal Server Error due to: ${e}`})
+    });
     
 })
 
 
 // POST a TODO
-app.post('/todos', (request, response) => {
+app.post('/todos', authenticate, (request, response) => {
+
+    // By calling authenticate middleware, we are validating a todos
+    // Also upon successful validation, authenticate middleware enriches the request with user details
     var todo = new Todo({
-        text: request.body.text
+        text: request.body.text,
+        // Populate the creator value from the request
+        _creator: request.user._id
     });
     todo.save().then((doc) => {
         response.status(200).send(doc);
@@ -175,14 +186,14 @@ app.post('/todos', (request, response) => {
 });
 
 // Delete route handler
-app.delete('/todos/:id', (request, response)=> {
+app.delete('/todos/:id', authenticate, (request, response)=> {
     const id = request.params.id;
     
     if(!ObjectID.isValid(id)){
         return response.status(400).send({'description': 'Invalid id'});
     }
 
-    Todo.findByIdAndRemove(id)
+    Todo.findOneAndRemove({_id: id, _creator: request.user._id})
     .then((todo) => {
         if(!todo){
             return response.status(404).send({'description': 'Id does not exists'});
@@ -193,7 +204,7 @@ app.delete('/todos/:id', (request, response)=> {
 })
 
 // Update todo. Can use PUT or PATCH
-app.patch('/todos/:id', (request, response) => {
+app.patch('/todos/:id', authenticate, (request, response) => {
 
     var id = request.params.id;
     // No need to pick all the invalid content that is not supported for update
@@ -208,8 +219,7 @@ app.patch('/todos/:id', (request, response) => {
         body.completed = false;
         body.completedAt = null;
     }
-
-    Todo.findByIdAndUpdate(new ObjectID(id), {$set: body}, {new: true})
+    Todo.findOneAndUpdate({_id: id, _creator: request.user._id}, {$set: body}, {new: true})
     .then((todo) => {
         if(!todo){
             return response.status(404).send({description: 'Id not found'});

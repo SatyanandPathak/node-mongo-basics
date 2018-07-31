@@ -10,23 +10,14 @@ const userTwoId = new ObjectID();
 var getToken = userId => JWT.sign({_id:userId, access: 'auth'}, 'secretsalt').toString();
 
 const users = [
-    {
-        _id: userOneId, 
-        email: 'satyanand@gmail.com', 
-        password: 'userone123', 
-        tokens: [
-            {access: 'auth', token: getToken(userOneId)}]
-        },
-    {
-        _id: userTwoId,
-        email: 'sunita@gmail.com',
-        password: 'usertwo123'
-    }
+    {_id: userOneId, email: 'satyanand@gmail.com', password: 'userone123', tokens: [{access: 'auth', token: getToken(userOneId)}]},
+    {_id: userTwoId, email: 'sunita@gmail.com', password: 'usertwo123', tokens: [{access: 'auth', token: getToken(userTwoId)}]}
 ]
 
 const todos = [
-    {_id: new ObjectID(),text: 'First test TODO'}, 
-    {_id: new ObjectID(), text: 'Second test TODO', completed:true, completedAt:333}];
+    {_id: new ObjectID(),text: 'First test TODO', _creator: userOneId}, 
+    {_id: new ObjectID(), text: 'Second test TODO', completed:true, completedAt:333, _creator: userTwoId}
+];
 
 const populateTodos = (done) => {
         Todo.remove({}).then(() => {
