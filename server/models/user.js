@@ -128,7 +128,6 @@ UserSchema.methods.generateAuthToken = function () {
                 }
             })
         });
-
     });
   }
 

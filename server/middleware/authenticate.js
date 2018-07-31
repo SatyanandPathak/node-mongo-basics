@@ -7,7 +7,7 @@ var authenticate = (request, response, next) => {
     User.findByToken(token)
     .then(user => {
         if(!user){
-            return Promise.reject({message: 'Cannot find a valid user'});
+            return Promise.reject('Cannot find a valid user');
         }
         // Add the details into request and propogate it to next 
         request.user = user;
@@ -18,7 +18,7 @@ var authenticate = (request, response, next) => {
     })
     .catch(e => {
         // No need to call next() to propogate as auth failed
-        response.status(401).send(e);
+        response.status(401).send({message: e});
     });
 }
 

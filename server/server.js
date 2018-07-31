@@ -108,8 +108,6 @@ app.get('/users/me', authenticate, (request, response) => {
         .then(token => {
             return response.header('x-auth-token', token).send({user});
         })
-
-        
       })
       .catch(e => {
         return response.status(401).send({message: e});
@@ -123,7 +121,7 @@ app.get('/users/me', authenticate, (request, response) => {
    app.delete('/users/me/token', authenticate, (request, response) => {
     request.user.removeToken(request.token)
     .then(() => {
-        response.status(200).send({message: 'User successfully logged out. Session Token deleted'});
+        response.status(202).send({message: 'User successfully logged out. Session Token deleted'});
     })
     .catch(e => response.status(400).send(e));
 
