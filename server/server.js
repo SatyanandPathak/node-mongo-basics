@@ -58,7 +58,7 @@ app.get('/', (request, response) => {
 
 
 /**
- * Get a specifi user using a token. authenticate middleware is called
+ * Get a specific user using a token. authenticate middleware is called
  */
 app.get('/users/me', authenticate, (request, response) => {
     // This calls authenticate before and if success request is populated with user and token
@@ -95,7 +95,7 @@ app.get('/users/me', authenticate, (request, response) => {
  });
 
  /**
-  * Post user login
+  * Post user login. Retrieve a token for a user
   */
 
   app.post('/users/login', (request, response) => {

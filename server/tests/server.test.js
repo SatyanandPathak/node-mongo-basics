@@ -170,7 +170,8 @@ describe('Delete todos', () => {
       }
       Todo.findById(id)
       .then((todo) => {
-        expect(todo).toBe(null);
+        //expect(todo).toBe(null);
+        expect(todo).toBeFalsy();  // Old expect toNotExist
         done();
       })
       .catch(err => done(err));
@@ -191,7 +192,7 @@ describe('Delete todos', () => {
       }
       Todo.findById(id.toHexString())
       .then(todo => {
-        expect(todo).toBeTruthy();
+        expect(todo).toBeTruthy();  // Old expect toExist
         done();
       })
       .catch(e => done(e))
@@ -382,8 +383,13 @@ describe('POST /users/login', () => {
       .then((user) => {
         // Here the user returned from DB will have complete details including the tokens
         // The token added will be second item in the tokens array
-        expect(user.tokens[1].token).toBe(res.headers['x-auth-token']);
-        expect(user.tokens[1].access).toBe('auth');
+        // expect(user.tokens[1].token).toBe(res.headers['x-auth-token']);
+        // expect(user.tokens[1].access).toBe('auth');
+
+        expect(user.tokens[1]).toMatchObject({
+          access: 'auth',
+          token: res.headers['x-auth-token']
+        });
         
         // expect(user.tokens[0]).toBe({
         //   access: 'auth',
